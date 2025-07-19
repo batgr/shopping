@@ -16,6 +16,7 @@ def main():
 
     # Load data from spreadsheet and split into train and test sets
     evidence, labels = load_data(sys.argv[1])
+    
     X_train, X_test, y_train, y_test = train_test_split(
         evidence, labels, test_size=TEST_SIZE
     )
@@ -60,7 +61,28 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    model_data = pd.read_csv(filename)
+    
+    
+    
+    # Conversion Month (noms de mois → index 0-11)
+    month_mapping = {
+        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'June': 5,
+        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+    }
+    
+    model_data['Month'] = model_data['Month'].map(month_mapping).astype(int)
+    model_data['VisitorType'] = (model_data['VisitorType'] == "Returning_Visitor").astype(int)
+    model_data['Revenue'] = (model_data['Revenue']).astype(int)
+    model_data['Weekend'] = (model_data['Weekend']).astype(int)
+    
+    label = model_data.Revenue.to_list()
+    
+    evidence_names = model_data.columns[:-1].to_list()
+    
+    evidences = model_data[evidence_names].to_numpy().tolist()
+    
+    return (evidences,label)
 
 
 def train_model(evidence, labels):
