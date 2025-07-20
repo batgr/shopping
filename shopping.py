@@ -29,8 +29,13 @@ def main():
     # Print results
     print(f"Correct: {(y_test == predictions).sum()}")
     print(f"Incorrect: {(y_test != predictions).sum()}")
+   
+
     print(f"True Positive Rate: {100 * sensitivity:.2f}%")
     print(f"True Negative Rate: {100 * specificity:.2f}%")
+    
+  
+
 
 
 def load_data(filename):
@@ -80,7 +85,7 @@ def load_data(filename):
     
     evidence_names = model_data.columns[:-1].to_list()
     
-    evidences = model_data[evidence_names].to_numpy().tolist()
+    evidences = model_data[evidence_names].values.tolist()
     
     return (evidences,label)
 
@@ -110,7 +115,29 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    sensitivity = 0
+    specificity = 0
+    
+    positive_sum =0
+    negative_sum =0
+    
+    
+    for label,prediction in zip(labels,predictions):
+        if label==1:
+            if label == prediction:
+                sensitivity += 1
+            positive_sum +=1
+        
+        if label == 0:
+            if label == prediction:
+                specificity +=1
+            negative_sum +=1
+            
+    
+    sensitivity /= positive_sum
+    specificity /= negative_sum
+    
+    return (sensitivity,specificity)
 
 
 if __name__ == "__main__":
